@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 
 const Editor = () => {
     return (
@@ -10,7 +10,7 @@ const Editor = () => {
                 <Link to="/">Home</Link>
             </div>
         </section>
-    )
-}
+    );
+};
 
-export default Editor
+export default Editor;

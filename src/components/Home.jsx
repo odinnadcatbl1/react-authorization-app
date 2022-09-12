@@ -7,11 +7,11 @@ const Home = () => {
     const navigate = useNavigate();
 
     const logout = async () => {
-        // if used in more components, this should be in context 
-        // axios to /logout endpoint 
+        // if used in more components, this should be in context
+        // axios to /logout endpoint
         setAuth({});
-        navigate('/linkpage');
-    }
+        navigate("/linkpage");
+    };
 
     return (
         <section>
@@ -30,7 +30,7 @@ const Home = () => {
                 <button onClick={logout}>Sign Out</button>
             </div>
         </section>
-    )
-}
+    );
+};
 
-export default Home
+export default Home;

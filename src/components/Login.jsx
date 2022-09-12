@@ -1,101 +1,121 @@
-import { useRef, useState, useEffect } from 'react';
-import useAuth from '../hooks/useAuth';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useRef, useState, useEffect, useContext } from "react";
+import AuthContext from "./context/AuthProvider";
+import axios from "./api/axios";
 
-import axios from '../api/axios';
-const LOGIN_URL = '/auth';
+const LOGIN_URL = "/auth";
 
 const Login = () => {
-    const { setAuth } = useAuth();
-
-    const navigate = useNavigate();
-    const location = useLocation();
-    const from = location.state?.from?.pathname || "/";
+    const { setAuth } = useContext(AuthContext);
 
     const userRef = useRef();
     const errRef = useRef();
 
-    const [user, setUser] = useState('');
-    const [pwd, setPwd] = useState('');
-    const [errMsg, setErrMsg] = useState('');
+    const [user, setUser] = useState("");
+    const [pwd, setPwd] = useState("");
+    const [errMsg, setErrMsg] = useState("");
+    const [success, setSuccess] = useState(false);
 
     useEffect(() => {
         userRef.current.focus();
-    }, [])
+    }, []);
 
     useEffect(() => {
-        setErrMsg('');
-    }, [user, pwd])
+        setErrMsg("");
+    }, [user, pwd]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await axios.post(LOGIN_URL,
+            const response = await axios.post(
+                LOGIN_URL,
                 JSON.stringify({ user, pwd }),
                 {
-                    headers: { 'Content-Type': 'application/json' },
-                    withCredentials: true
+                    headers: { "Content-Type": "application/json" },
+                    withCredentials: true,
                 }
             );
-            console.log(JSON.stringify(response?.data));
-            //console.log(JSON.stringify(response));
+
             const accessToken = response?.data?.accessToken;
             const roles = response?.data?.roles;
             setAuth({ user, pwd, roles, accessToken });
-            setUser('');
-            setPwd('');
-            navigate(from, { replace: true });
+
+            setUser("");
+            setPwd("");
+            setSuccess(true);
         } catch (err) {
             if (!err?.response) {
-                setErrMsg('No Server Response');
+                setErrMsg("No Server Response");
             } else if (err.response?.status === 400) {
-                setErrMsg('Missing Username or Password');
+                setErrMsg("Missing Username or Password");
             } else if (err.response?.status === 401) {
-                setErrMsg('Unauthorized');
+                setErrMsg("Unauthorized");
             } else {
-                setErrMsg('Login Failed');
+                setErrMsg("Login Failed");
             }
+
             errRef.current.focus();
         }
-    }
+    };
 
     return (
+        <>
+            {success ? (
+                <section>
+                    <h1>You are logged in!</h1>
+                    <br />
+                    <p>
+                        <a href="#">Go to Home</a>
+                    </p>
+                </section>
+            ) : (
+                <section>
+                    <p
+                        ref={errRef}
+                        className={errMsg ? "errmsg" : "offscreen"}
+                        aria-live="assertive"
+                    >
+                        {errMsg}
+                    </p>
 
-        <section>
-            <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-            <h1>Sign In</h1>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="username">Username:</label>
-                <input
-                    type="text"
-                    id="username"
-                    ref={userRef}
-                    autoComplete="off"
-                    onChange={(e) => setUser(e.target.value)}
-                    value={user}
-                    required
-                />
+                    <h1>Sign In</h1>
 
-                <label htmlFor="password">Password:</label>
-                <input
-                    type="password"
-                    id="password"
-                    onChange={(e) => setPwd(e.target.value)}
-                    value={pwd}
-                    required
-                />
-                <button>Sign In</button>
-            </form>
-            <p>
-                Need an Account?<br />
-                <span className="line">
-                    <Link to="/register">Sign Up</Link>
-                </span>
-            </p>
-        </section>
+                    <form onSubmit={handleSubmit}>
+                        <label htmlFor="username">Username:</label>
+                        <input
+                            type="text"
+                            id="username"
+                            ref={userRef}
+                            autoComplete="off"
+                            onChange={(e) => setUser(e.target.value)}
+                            value={user}
+                            required
+                        />
 
-    )
-}
+                        <label htmlFor="password">Password:</label>
+                        <input
+                            type="password"
+                            id="password"
+                            autoComplete="off"
+                            onChange={(e) => setPwd(e.target.value)}
+                            value={pwd}
+                            required
+                        />
 
-export default Login
+                        <button>Sign In</button>
+                        <p>
+                            Need an Account?
+                            <br />
+                            <span className="line">
+                                {/*put router link here*/}
+                                <a href="#">Sign Up</a>
+                            </span>
+                        </p>
+                    </form>
+                </section>
+            )}
+        </>
+    );
+};
+
+export default Login;
