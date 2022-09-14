@@ -1,8 +1,15 @@
-import Register from "./Register";
-import Login from "./Login";
+import Register from "./components/Register";
+import Login from "./components/Login";
 import Layout from "./components/Layout";
-
 import { Routes, Route } from "react-router-dom";
+import LinkPage from "./components/LinkPage";
+import Home from "./components/Home";
+import Editor from "./components/Editor";
+import Admin from "./components/Admin";
+import Lounge from "./components/Lounge";
+import Missing from "./components/Missing";
+import Unauthorized from "./components/Unauthorized";
+import RequireAuth from "./components/RequireAuth";
 
 const App = () => {
     return (
@@ -15,10 +22,12 @@ const App = () => {
             <Route path="/unauthorized" element={<Unauthorized />} />
 
             {/* private routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/editor" element={<Editor />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/lounge" element={<Lounge />} />
+            <Route element={<RequireAuth />}>
+                <Route path="/" element={<Home />} />
+                <Route path="/editor" element={<Editor />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/lounge" element={<Lounge />} />
+            </Route>
 
             {/* catch all */}
             <Route path="*" element={<Missing />} />
