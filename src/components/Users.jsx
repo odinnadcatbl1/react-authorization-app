@@ -18,8 +18,9 @@ const Users = () => {
                     signal: controller.signal,
                 });
 
+                const userName = response.data.map((user) => user.username);
                 console.log(response.data);
-                isMounted && setUsers(response.data);
+                isMounted && setUsers(userName);
             } catch (err) {
                 console.log(err);
                 navigate("/login", {
@@ -43,7 +44,7 @@ const Users = () => {
             {users?.length ? (
                 <ul>
                     {users.map((user) => (
-                        <li key={user?.name}>{user?.username}</li>
+                        <li key={user}>{user}</li>
                     ))}
                 </ul>
             ) : (
