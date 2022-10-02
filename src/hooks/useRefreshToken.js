@@ -17,7 +17,7 @@ const useRefreshToken = () => {
         return response.data.accessToken;
     };
 
-    return <div>useRefreshToken</div>;
+    return refresh;
 };
 
 export default useRefreshToken;
